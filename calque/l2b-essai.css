@@ -1,0 +1,124 @@
+/* ==========================================================================
+   L2B ENERGIES — calque visuel de la version de test
+   Présentation uniquement : aucun texte, photo ni coordonnée n'est modifié.
+   Ce fichier est chargé en dernier dans <head>, après les styles du site.
+   ========================================================================== */
+
+/* --- Polices de la charte, hébergées avec le site (aucun appel à Google) --- */
+@font-face {
+  font-family: "L2B Poppins";
+  src: url(polices/poppins-latin-600-normal.woff2) format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "L2B Poppins";
+  src: url(polices/poppins-latin-700-normal.woff2) format("woff2");
+  font-weight: 700 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "L2B Comfortaa";
+  src: url(polices/comfortaa-latin-400-normal.woff2) format("woff2");
+  font-weight: 300 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "L2B Comfortaa";
+  src: url(polices/comfortaa-latin-700-normal.woff2) format("woff2");
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --l2b-vert: #5FB562;
+  --l2b-vert-vif: #499401;
+  --l2b-vert-fonce: #013927;
+  --l2b-creme: #F5FFFA;
+  --l2b-police-titres: "L2B Poppins", "Poppins", system-ui, sans-serif;
+  --l2b-police-texte: "L2B Comfortaa", "Comfortaa", system-ui, sans-serif;
+  /* Courbe « ressort amorti », proche des transitions de Motion Primitives */
+  --l2b-courbe: cubic-bezier(.22, 1, .36, 1);
+}
+
+/* --- Typographie --- */
+html body h1, html body h2, html body h3,
+html body h4, html body h5, html body h6 {
+  font-family: var(--l2b-police-titres);
+}
+html body {
+  font-family: var(--l2b-police-texte);
+}
+
+/* --- Fond SVG (vagues + formes douces), fixe derrière le contenu --- */
+html {
+  background-color: var(--l2b-creme);
+}
+html body {
+  background-color: transparent;
+}
+html body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url(l2b-fond.svg) center / 100% 100% no-repeat;
+}
+
+/* --- Sections qui apparaissent au défilement --- */
+.l2b-apparition {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(6px);
+  transition:
+    opacity .8s var(--l2b-courbe),
+    transform .8s var(--l2b-courbe),
+    filter .8s var(--l2b-courbe);
+}
+.l2b-apparition.l2b-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* --- Titre principal qui se révèle mot par mot --- */
+/* Le titre attend le script ; s'il ne vient pas, il s'affiche quand même après 2,5 s. */
+.l2b-anim h1:not(.l2b-titre-pret) {
+  opacity: 0;
+  animation: l2b-secours 0s 2.5s forwards;
+}
+@keyframes l2b-secours {
+  to { opacity: 1; }
+}
+.l2b-mot {
+  display: inline-block;
+  animation: l2b-mot-entree .7s var(--l2b-courbe) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 120ms);
+}
+@keyframes l2b-mot-entree {
+  from { opacity: 0; transform: translateY(.35em); filter: blur(8px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+/* --- Compteurs : chiffres à largeur fixe pendant qu'ils montent --- */
+.l2b-compteur {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Mouvement réduit : tout s'affiche directement, sans animation --- */
+@media (prefers-reduced-motion: reduce) {
+  .l2b-anim h1:not(.l2b-titre-pret) { opacity: 1; animation: none; }
+  .l2b-apparition { opacity: 1; transform: none; filter: none; transition: none; }
+  .l2b-mot { animation: none; }
+}
+
+/* --- Impression : pas de fond décoratif, tout visible --- */
+@media print {
+  html body::before { display: none; }
+  .l2b-apparition { opacity: 1; transform: none; filter: none; }
+}
